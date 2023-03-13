@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: "password"
     image: postgres:13-alpine3.17
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - reg_db_volume:/var/lib/postgresql/data
   
   jwt_registration_api:
     build: ./
@@ -20,3 +20,6 @@ services:
     depends_on:
       - db
     restart: always
+
+volumes:
+  reg_db_volume:
