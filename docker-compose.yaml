@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  db:
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "reg_db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+    image: postgres:13-alpine3.17
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+  
+  jwt_registration_api:
+    build: ./
+
+    ports:
+      - "127.0.0.1:3010:3010"
+    depends_on:
+      - db
+    restart: always

@@ -32,6 +32,7 @@ func (h *handler) RegisterRoute(router *httprouter.Router) {
 
 func (h *handler) RegisterUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	h.logger.Info("reg log")
+	w.Write([]byte("Ну работает"))
 }
 
 func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {

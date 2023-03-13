@@ -42,6 +42,4 @@ func main() {
 	userComposite.Handler.RegisterRoute(router)
 
 	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), router))
-
-	logger.Printf("Connect to http://localhost:%s/ for using API", port)
 }
