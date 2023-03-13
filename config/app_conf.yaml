@@ -1,0 +1,4 @@
+defaultPort: 3010
+db:
+  url: root1:dbpasss@tcp1(127.10.0.1:3306)/bbr
+
