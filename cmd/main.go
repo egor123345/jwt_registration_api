@@ -1,9 +1,12 @@
 package main
 
 import (
-	postgres_client "jwt_registration_api/pkg/client/postgres"
+	"fmt"
+	"jwt_registration_api/internal/composites"
+	"net/http"
 	"os"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
@@ -24,9 +27,21 @@ func main() {
 		port = viper.GetString("defaultPort")
 	}
 
-	db, err := postgres_client.NewClient(viper.GetString("db.url"))
+	dbComposite, err := composites.NewPostgresComposite(viper.GetString("db.url"))
 	if err != nil {
 		logger.Fatal(err)
 	}
-	defer db.Close()
+	defer dbComposite.Db.Close()
+
+	userComposite, err := composites.NewUserComposite(dbComposite, logger)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	router := httprouter.New()
+	userComposite.Handler.RegisterRoute(router)
+
+	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), router))
+
+	logger.Printf("Connect to http://localhost:%s/ for using API", port)
 }

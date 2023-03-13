@@ -18,8 +18,11 @@ type handler struct {
 	logger  *logrus.Logger
 }
 
-func NewHandler(service Service) http_handlers.Handler {
-	return &handler{service: service}
+func NewHandler(service Service, logger *logrus.Logger) http_handlers.Handler {
+	return &handler{
+		service: service,
+		logger:  logger,
+	}
 }
 
 func (h *handler) RegisterRoute(router *httprouter.Router) {
