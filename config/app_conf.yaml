@@ -1,3 +1,3 @@
-defaultPort: 3010
+defaultPort: 3012
 db:
   url: postgres://postgres:password@db:5432/reg_db?sslmode=disable
