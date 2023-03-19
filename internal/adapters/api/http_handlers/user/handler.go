@@ -50,8 +50,11 @@ func (h *handler) RegisterUser(w http.ResponseWriter, r *http.Request, params ht
 		return
 	}
 
-	h.logger.Info("Successful RegisterUser")
-	json.NewEncoder(w).Encode(regPayload)
+	if err = json.NewEncoder(w).Encode(regPayload); err != nil {
+		h.logger.Error(err.Error())
+	} else {
+		h.logger.Info("Successful RegisterUser")
+	}
 }
 
 func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -71,12 +74,17 @@ func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, params httpr
 		return
 	}
 
-	h.logger.Info("Successful login user")
-	json.NewEncoder(w).Encode(loginPayload)
+	if err = json.NewEncoder(w).Encode(loginPayload); err != nil {
+		h.logger.Error(err.Error())
+	} else {
+		h.logger.Info("Successful login user")
+	}
 }
 
 func (h *handler) handleError(w http.ResponseWriter, err error, httpStatusCode int) {
 	w.WriteHeader(httpStatusCode)
 	h.logger.Errorf("%s httpStatusCode: %d", err.Error(), httpStatusCode)
-	w.Write([]byte(`{"error": "` + err.Error() + `"}`))
+	if _, writeErr := w.Write([]byte(`{"error": "` + err.Error() + `"}`)); writeErr != nil {
+		h.logger.Error(writeErr.Error())
+	}
 }
