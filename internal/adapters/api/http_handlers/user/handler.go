@@ -1,7 +1,10 @@
 package user
 
 import (
+	"encoding/json"
+	"errors"
 	"jwt_registration_api/internal/adapters/api/http_handlers"
+	"jwt_registration_api/internal/adapters/api/http_handlers/dto"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -31,13 +34,34 @@ func (h *handler) RegisterRoute(router *httprouter.Router) {
 }
 
 func (h *handler) RegisterUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	r.Header.Set("Content-Type", "application/json")
-	h.logger.Info("reg log")
-	w.Write([]byte("{\"test\":\"Ну работает\"}"))
+	w.Header().Set("Content-Type", "application/json")
+
+	regInput := dto.RegisterInput{}
+	if err := json.NewDecoder(r.Body).Decode(&regInput); err != nil {
+		err = errors.New("Incorrect input register user data: " + err.Error())
+		h.handleError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	regPayload, err := h.service.Register(r.Context(), &regInput)
+	if err != nil {
+		err = errors.New("Can`t register user: " + err.Error())
+		h.handleError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	h.logger.Info("Successful RegisterUser")
+	json.NewEncoder(w).Encode(regPayload)
 }
 
 func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	r.Header.Set("Content-Type", "application/json")
 
 	h.logger.Info("login log")
+}
+
+func (h *handler) handleError(w http.ResponseWriter, err error, httpStatusCode int) {
+	w.WriteHeader(httpStatusCode)
+	h.logger.Errorf("%s httpStatusCode: %d", err.Error(), httpStatusCode)
+	w.Write([]byte(`{"error": "` + err.Error() + `"}`))
 }

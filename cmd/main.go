@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const configPath = "config/app_conf.yaml"
+const configPath = "../config/app_conf.yaml"
 
 func main() {
 	logger := logrus.New()
