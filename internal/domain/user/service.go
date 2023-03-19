@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"fmt"
 	"jwt_registration_api/internal/adapters/api/http_handlers/dto"
 	"jwt_registration_api/internal/adapters/api/http_handlers/user"
 	"jwt_registration_api/internal/domain/regJwt"
@@ -62,7 +61,20 @@ func (s *service) Login(ctx context.Context, loginInput *dto.LoginInput) (*dto.L
 	if err != nil {
 		return nil, errors.New("The user with this username was not found: " + err.Error())
 	}
-	fmt.Print(user)
 
-	return nil, nil
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginInput.Password))
+	if err != nil {
+		return nil, errors.New("The password is not correct: " + err.Error())
+	}
+
+	token, err := s.jwtServ.GenerateUserToken(user.Id)
+	if err != nil {
+		return nil, errors.New("Can`t generate user token: " + err.Error())
+	}
+
+	loginPayload := &dto.LoginPayload{
+		Token: token,
+	}
+
+	return loginPayload, nil
 }
