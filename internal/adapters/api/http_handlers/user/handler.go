@@ -57,9 +57,22 @@ func (h *handler) RegisterUser(w http.ResponseWriter, r *http.Request, params ht
 func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// loginInput :=
+	loginInput := dto.LoginInput{}
+	if err := json.NewDecoder(r.Body).Decode(&loginInput); err != nil {
+		err = errors.New("Incorrect input login user data: " + err.Error())
+		h.handleError(w, err, http.StatusBadRequest)
+		return
+	}
 
-	h.logger.Info("login log")
+	loginPayload, err := h.service.Login(r.Context(), &loginInput)
+	if err != nil {
+		err = errors.New("Can`t login user: " + err.Error())
+		h.handleError(w, err, http.StatusUnauthorized)
+		return
+	}
+
+	h.logger.Info("Successful login user")
+	json.NewEncoder(w).Encode(loginPayload)
 }
 
 func (h *handler) handleError(w http.ResponseWriter, err error, httpStatusCode int) {
