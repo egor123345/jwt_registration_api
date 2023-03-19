@@ -55,7 +55,9 @@ func (h *handler) RegisterUser(w http.ResponseWriter, r *http.Request, params ht
 }
 
 func (h *handler) LoginUser(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	r.Header.Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
+
+	// loginInput :=
 
 	h.logger.Info("login log")
 }

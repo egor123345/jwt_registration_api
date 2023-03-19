@@ -33,7 +33,9 @@ func main() {
 	}
 	defer dbComposite.Db.Close()
 
-	userComposite, err := composites.NewUserComposite(dbComposite, logger)
+	signingJwtKey := viper.GetString("signingJwtKey")
+	hoursOfJwtAction := viper.GetInt("hoursOfJwtToken")
+	userComposite, err := composites.NewUserComposite(dbComposite, signingJwtKey, hoursOfJwtAction, logger)
 	if err != nil {
 		logger.Fatal(err)
 	}

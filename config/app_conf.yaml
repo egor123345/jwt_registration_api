@@ -1,3 +1,6 @@
 defaultPort: 3012
 db:
   url: postgres://postgres:password@127.0.0.1:5432/reg_db?sslmode=disable
+
+signingJwtKey : dergjergmfewlcd
+hoursOfJwtToken : 24
