@@ -33,15 +33,17 @@ func (s *storage) InsertUser(newUser *user.User) (*user.User, error) {
 
 func (s *storage) GetUserByLogin(login string) (*user.User, error) {
 	query := qb.
-		Select("*").
+		Select(SelectAllAuthUser).
 		From(TableAuthUser).
 		Where(qb.Eq{"login": login}).
+		PlaceholderFormat(qb.Dollar).
 		RunWith(s.db)
 
-	err := query.QueryRow().Scan()
+	var user user.User
+	err := query.QueryRow().Scan(&user.Id, &user.Login, &user.Email, &user.Password, &user.PhoneNumber)
 	if err != nil {
 		return nil, errors.New("Can`t find user with this login: " + err.Error())
 	}
 
-	return &user.User{}, nil
+	return &user, nil
 }

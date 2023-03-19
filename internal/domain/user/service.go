@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 	"jwt_registration_api/internal/adapters/api/http_handlers/dto"
 	"jwt_registration_api/internal/adapters/api/http_handlers/user"
 	"jwt_registration_api/internal/domain/regJwt"
@@ -57,5 +58,11 @@ func (s *service) Register(ctx context.Context, regInput *dto.RegisterInput) (*d
 }
 
 func (s *service) Login(ctx context.Context, loginInput *dto.LoginInput) (*dto.LoginPayload, error) {
+	user, err := s.storage.GetUserByLogin(loginInput.Login)
+	if err != nil {
+		return nil, errors.New("The user with this username was not found: " + err.Error())
+	}
+	fmt.Print(user)
+
 	return nil, nil
 }
